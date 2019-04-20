@@ -1,57 +1,34 @@
-#include <cassert>
+#include <vector>
 #include "matrix.hpp"
 #include "vector.hpp"
-#include <vector>
 
-Matrix buildQ(Matrix &start) {
-    auto Q = Matrix(start.rowCount(), start.colCount());
+std::pair<Matrix, Matrix> buildQAndR(const Matrix& start) {
+    Matrix Q = Matrix(start.rowCount(), start.colCount());
+    Matrix U = Matrix(start.rowCount(), start.colCount());
 
     std::vector<Vector> aVectors;
     std::vector<Vector> uVectors;
 
-    for(unsigned i = 0; i < start.colCount(); ++i) {
+    for (unsigned i = 0; i < start.colCount(); ++i) {
         aVectors.push_back(start.colVecFromMatrix(i));
     }
 
-    for(unsigned i = 0; i < start.colCount(); ++i) {
+    for (unsigned i = 0; i < start.colCount(); ++i) {
         auto currentUVector = aVectors[i];
-        for(unsigned j = 0; j < i; ++j) {
+        for (unsigned j = 0; j < i; ++j) {
             currentUVector -= aVectors[i].projectOnBasis(uVectors[j]);
         }
         uVectors.push_back(currentUVector);
         Q.insertColumnVector(currentUVector.unitize(), i);
-        std::cout << "BOINK" << std::endl;
-    }
-
-    return Q;
-}
-
-Matrix buildU(Matrix &start) {
-    auto U = Matrix(start.rowCount(), start.colCount());
-
-    std::vector<Vector> aVectors;
-    std::vector<Vector> uVectors;
-
-    for(unsigned i = 0; i < start.colCount(); ++i) {
-        aVectors.push_back(start.colVecFromMatrix(i));
-    }
-
-    for(unsigned i = 0; i < start.colCount(); ++i) {
-        auto currentUVector = aVectors[i];
-        for(unsigned j = 0; j < i; ++j) {
-            currentUVector -= aVectors[i].projectOnBasis(uVectors[j]);
-        }
-        uVectors.push_back(currentUVector);
         U.insertColumnVector(currentUVector, i);
     }
 
-    return U;
+    return std::pair<Matrix, Matrix>(Q, U);
 }
 
-
 int main(int argc, char ** argv) {
-    unsigned long n = (argc < 3) ? 3 : std::stoul(argv[1]);
-    unsigned long m = (argc < 3) ? 3 : std::stoul(argv[2]);
+    int64_t n = (argc < 3) ? 3 : std::stoul(argv[1]);
+    int64_t m = (argc < 3) ? 3 : std::stoul(argv[2]);
     auto N = static_cast<unsigned>(n);
     auto M = static_cast<unsigned>(m);
     Matrix A(N, M);
@@ -66,16 +43,24 @@ int main(int argc, char ** argv) {
     A(2, 2) = -41.0;
 
     auto oldA = A;
-    std::cout << "OLDA:\n " << A << std::endl;
-    auto Q = buildQ(oldA);
-    std::cout << "Q:\n " << Q << std::endl;
-    auto oldU = buildU(oldA);
-    std::cout << "OLDU:\n " << oldU << std::endl;
+    auto QU = buildQAndR(oldA);
+    auto Q = QU.first;
+    auto oldU = QU.second;
     auto R = Q.transpose() * oldA;
-    std::cout << "R:\n " << R << std::endl;
     auto newA = R * Q;
     auto newU = oldU * Q;
-
-    return 0;
+    oldU = newU;
+    oldA = newA;
+    for (int i = 0; i < 100; ++i) {
+        QU = buildQAndR(oldA);
+        Q = QU.first;
+        oldU = QU.second;
+        R = Q.transpose() * oldA;
+        newA = R * Q;
+        newU = oldU * Q;
+        oldU = newU;
+        oldA = newA;
+        if (i%10 == 0) std::cout << newA;
+    }
 }
 

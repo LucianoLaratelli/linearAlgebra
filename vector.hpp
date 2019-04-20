@@ -12,7 +12,7 @@
 
 
 class Vector {
-public:
+ public:
     explicit Vector(unsigned size);
     Vector(const Vector & other);
 
@@ -26,22 +26,22 @@ public:
 
     double operator*(const Vector &v) const;
     Vector operator*(double n) const;
-    Vector operator-(Vector &v);
-    Vector operator-=(const Vector &v);
+    Vector operator-(Vector v);
+    void operator-=(const Vector &v);
 
     bool operator==(const Vector &rhs) const;
     bool operator!=(const Vector &rhs) const;
 
     double norm() const;
     Vector unitize() const;
-    Vector projectOnBasis(const Vector &v) const;
+    Vector projectOnBasis(const Vector& v);
 
     unsigned size() const;
     double * getData() const;
 
     friend std::ostream &operator<<(std::ostream &stream, Vector v);
 
-private:
+ private:
     unsigned size_;
     double * data_;
 

@@ -8,11 +8,12 @@
 #include <numeric>
 #include <iostream>
 #include <iomanip>
+#include <utility>
 #include "vector.hpp"
 
 
 class Matrix {
-public:
+ public:
     Matrix(unsigned rows, unsigned cols);
     Matrix(const Matrix & other);
 
@@ -23,21 +24,20 @@ public:
 
     Matrix &operator=(Matrix&& other) noexcept;
     Matrix &operator=(const Matrix & other);
-    Matrix operator*(Matrix &m);
-    Matrix transpose();
+    Matrix operator*(const Matrix &m);
+    Matrix transpose() const;
 
     bool operator==(const Matrix &rhs) const;
     bool operator!=(const Matrix &rhs) const;
 
-    Vector colVecFromMatrix(unsigned column);
+    Vector colVecFromMatrix(unsigned column) const;
     void insertColumnVector(Vector v, unsigned column);
     unsigned rowCount() const;
     unsigned colCount() const;
 
+    friend std::ostream &operator<<(std::ostream &stream, Matrix &m);
 
-    friend std::ostream &operator<<(std::ostream &stream, Matrix m);
-
-private:
+ private:
     unsigned rows_, cols_;
     double ** data_;
 };
