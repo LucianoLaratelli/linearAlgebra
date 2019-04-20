@@ -154,3 +154,17 @@ std::ostream &operator<<(std::ostream &stream, Matrix &m) {
     }
     return stream;
 }
+
+std::ostream &operator<<(std::ostream &stream, Matrix m) {
+    for (int i = 0; i < m.rows_; i++) {
+        for (int j = 0; j < m.cols_; j++) {
+            if (std::abs(m(i, j)) < 10e-8) {
+                stream << std::setw(12) << 0.0 << " ";
+            } else {
+                stream << std::setw(12) << m(i, j) << " ";
+            }
+        }
+        stream << std::endl;
+    }
+    return stream;
+}

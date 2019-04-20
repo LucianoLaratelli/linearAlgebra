@@ -36,6 +36,7 @@ class Matrix {
     unsigned colCount() const;
 
     friend std::ostream &operator<<(std::ostream &stream, Matrix &m);
+    friend std::ostream &operator<<(std::ostream &stream, Matrix m);
 
  private:
     unsigned rows_, cols_;

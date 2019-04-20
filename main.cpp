@@ -26,6 +26,29 @@ std::pair<Matrix, Matrix> buildQAndR(const Matrix& start) {
     return std::pair<Matrix, Matrix>(Q, U);
 }
 
+Matrix QRDecomposition(const Matrix &start) {
+    auto oldA = start;
+    auto QU = buildQAndR(oldA);
+    auto Q = QU.first;
+    auto oldU = QU.second;
+    auto R = Q.transpose() * oldA;
+    auto newA = R * Q;
+    auto newU = oldU * Q;
+    oldU = newU;
+    oldA = newA;
+    for (int i = 0; i < 1000; ++i) {
+        QU = buildQAndR(oldA);
+        Q = QU.first;
+        oldU = QU.second;
+        R = Q.transpose() * oldA;
+        newA = R * Q;
+        newU = oldU * Q;
+        oldU = newU;
+        oldA = newA;
+    }
+    return newA;
+}
+
 int main(int argc, char ** argv) {
     int64_t n = (argc < 3) ? 3 : std::stoul(argv[1]);
     int64_t m = (argc < 3) ? 3 : std::stoul(argv[2]);
@@ -41,26 +64,6 @@ int main(int argc, char ** argv) {
     A(2, 0) = -4.0;
     A(2, 1) = 24.0;
     A(2, 2) = -41.0;
-
-    auto oldA = A;
-    auto QU = buildQAndR(oldA);
-    auto Q = QU.first;
-    auto oldU = QU.second;
-    auto R = Q.transpose() * oldA;
-    auto newA = R * Q;
-    auto newU = oldU * Q;
-    oldU = newU;
-    oldA = newA;
-    for (int i = 0; i < 100; ++i) {
-        QU = buildQAndR(oldA);
-        Q = QU.first;
-        oldU = QU.second;
-        R = Q.transpose() * oldA;
-        newA = R * Q;
-        newU = oldU * Q;
-        oldU = newU;
-        oldA = newA;
-        if (i%10 == 0) std::cout << newA;
-    }
+    std::cout << QRDecomposition(A) << std::endl;
 }
 
