@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN
-#include "catch2/Catch2/single_include/catch2/catch.hpp"
+#include "catch2/single_include/catch2/catch.hpp"
 #include "matrix.hpp"
 #include "vector.hpp"
 

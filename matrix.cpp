@@ -113,7 +113,6 @@ Vector Matrix::colVecFromMatrix(unsigned column) {
     for(unsigned i = 0; i < rows_; ++i) {
         v[i] = data_[i][column];
     }
-    std::cout << v << std::endl;
     return v;
 }
 
