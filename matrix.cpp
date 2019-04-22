@@ -42,6 +42,18 @@ double Matrix::operator()(unsigned row, unsigned col) const {
     return data_[row][col];
 }
 
+double Matrix::smallestValue() const {
+    double smallest = std::numeric_limits<double>::max();
+    for (unsigned i = 0; i < rows_; ++i) {
+        for (unsigned j = 0; j < cols_; ++j) {
+            if ((*this)(i,j) < smallest) {
+                smallest = (*this)(i,j);
+            }
+        }
+    }
+    return smallest;
+}
+
 Matrix &Matrix::operator=(Matrix &&other) noexcept {
     using std::swap;
     swap(rows_, other.rows_);
@@ -83,6 +95,24 @@ Matrix Matrix::transpose() const {
     for (int i = 0; i < cols_; ++i) {
         for (int j = 0; j < rows_; ++j) {
             result.data_[i][j] = this->data_[j][i];
+        }
+    }
+    return result;
+}
+
+Matrix Matrix::getTriangular(matrixType mt) {
+    Matrix result(rows_, cols_);
+    for(unsigned i = 0; i < rows_; ++i) {
+        for(unsigned j = 0; j < cols_; ++j) {
+            if (mt == lower) {
+                if (j < i){
+                    result(i,j) = (*this)(i,j);
+                }
+            } else if (mt == upper) {
+                if (j > i){
+                    result(i,j) = (*this)(i,j);
+                }
+            }
         }
     }
     return result;
@@ -141,7 +171,8 @@ unsigned Matrix::colCount() const {
     return cols_;
 }
 
-std::ostream &operator<<(std::ostream &stream, Matrix &m) {
+/*
+std::ostream &operator<<(std::ostream &stream, const Matrix &m) {
     for (int i = 0; i < m.rows_; i++) {
         for (int j = 0; j < m.cols_; j++) {
             if (std::abs(m(i, j)) < 10e-8) {
@@ -154,6 +185,7 @@ std::ostream &operator<<(std::ostream &stream, Matrix &m) {
     }
     return stream;
 }
+ */
 
 std::ostream &operator<<(std::ostream &stream, Matrix m) {
     for (int i = 0; i < m.rows_; i++) {
@@ -168,3 +200,4 @@ std::ostream &operator<<(std::ostream &stream, Matrix m) {
     }
     return stream;
 }
+
